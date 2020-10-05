@@ -1,12 +1,15 @@
-databases:
-  - user: asdf
-    password: asdf
-    host: 123.123.123.123
-    port: 1234
-  - user: asdf
-    password: asdf
-    host: 123.123.123.123
-    port: 1234
+databaseConnections:
+  - user: postgres
+    password: naverscv!23
+    host: 127.0.0.1
+    port: 5432
+    database: postgres
+
+  - user: postgres
+    password: naverscv!23
+    host: 127.0.0.1
+    port: 5432
+    database: postgres
 
 tests:
   - filename: ./assets/sql/test1.xml

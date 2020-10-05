@@ -1,13 +1,16 @@
 <mapper>
     <select id="case1">
         SELECT 
-            a
-            <if test="id == 'a'">
-            ,b
-            </if>
-            <if test="id == 'b'">
+            *
+        <if test="id == 'a'">
+            ,name
+        </if>
+        <if test="id == 'b'">
             ,#{id} as id
-            </if>
-        FROM PERSON WHERE ID = #{id}
+        </if>
+        FROM PUBLIC.PERSON
+        <if test="id.length > 1">
+            WHERE ID = #{id}
+        </if>
     </select>
 </mapper>

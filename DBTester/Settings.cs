@@ -7,7 +7,8 @@ namespace DBTester
 {
     public class Settings
     {
-        public IEnumerable<Database> Databases { get; set; }
+        [YamlMember("databaseConnections")]
+        public IEnumerable<DatabaseConnection> DatabaseConnections { get; set; }
 
         public IEnumerable<Test> Tests { get; set; }
 
@@ -31,10 +32,29 @@ namespace DBTester
         {
             foreach (var item in Tests)
             {
-                Console.WriteLine("==========");
-                Console.WriteLine(item.Filename);
-                item.Initialize();
-                item.RunAll();
+                foreach (var child in item.Cases)
+                {
+                    try
+                    {
+                        var sql = child.GetSql(item.Document);
+
+                        foreach (var dbConnection in DatabaseConnections)
+                        {
+                            try
+                            {
+                                var result = sql.ExecuteCommand(dbConnection);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
+                }
             }
         }
     }
