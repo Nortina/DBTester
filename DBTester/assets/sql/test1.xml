@@ -1,0 +1,13 @@
+<mapper>
+    <select id="case1">
+        SELECT 
+            a
+            <if test="id == 'a'">
+            ,b
+            </if>
+            <if test="id == 'b'">
+            ,#{id} as id
+            </if>
+        FROM PERSON WHERE ID = #{id}
+    </select>
+</mapper>
