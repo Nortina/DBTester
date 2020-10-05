@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using DBTester.TestCompiler;
 
@@ -34,7 +35,7 @@ namespace DBTester
             return null;
         }
 
-        public static string GetSql(this XmlNode node, Dictionary<string, object> paramaters)
+        public static string GetSql(this XmlNode node, Dictionary<string, object> parameters)
         {
             var result = new StringBuilder();
 
@@ -51,7 +52,7 @@ namespace DBTester
 
                         var lexer = new Lexer(test);
                         var tokens = lexer.Lex();
-                        var tree = new AbstractSyntaxTree(tokens, paramaters);
+                        var tree = new AbstractSyntaxTree(tokens, parameters);
 
                         if (tree.Calc() is bool testResult)
                         {
@@ -71,7 +72,7 @@ namespace DBTester
                         var temp = new List<string>();
                         foreach (XmlNode item in node.ChildNodes)
                         {
-                            temp.Add(item.GetSql(paramaters));
+                            temp.Add(item.GetSql(parameters));
                         }
 
                         result.AppendJoin(" ", temp);
@@ -79,11 +80,12 @@ namespace DBTester
                     break;
 
                 case XmlNodeType.Text:
-                    result.Append(node.InnerText.Trim());
-                    break;
-
                 case XmlNodeType.CDATA:
-                    result.Append(node.InnerText.Trim());
+                    var regex = new Regex("^\\s*(.*)\\s*$", RegexOptions.Multiline);
+                    var multiLineRegex = new Regex("\\s*\\n\\s*", RegexOptions.Multiline);
+                    var text = regex.Replace(node.InnerText, "$1");
+                    text = multiLineRegex.Replace(text, " ");
+                    result.Append(text);
                     break;
             }
 

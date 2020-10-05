@@ -11,7 +11,7 @@ namespace DBTester
     {
         public static void Main(string[] args)
         {
-            var settings = Settings.FromFile("assets/settings.yaml");
+            var settings = Settings.FromFile("./settings.yaml");
             settings.RunAll();
         }
     }

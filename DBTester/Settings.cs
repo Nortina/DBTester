@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using SharpYaml.Serialization;
 
 namespace DBTester
@@ -30,19 +31,25 @@ namespace DBTester
 
         public void RunAll()
         {
-            foreach (var item in Tests)
+            var builder = new StringBuilder();
+
+            foreach (var test in Tests)
             {
-                foreach (var child in item.Cases)
+                builder.AppendLine($"filename|{test.Filename}");
+
+                foreach (var child in test.Cases)
                 {
                     try
                     {
-                        var sql = child.GetSql(item.Document);
+                        var sql = child.GetSql(test.Document);
+                        builder.AppendLine($"sql|{sql.Command}");
 
                         foreach (var dbConnection in DatabaseConnections)
                         {
                             try
                             {
                                 var result = sql.ExecuteCommand(dbConnection);
+                                builder.AppendLine($"result|{result}");
                             }
                             catch (Exception ex)
                             {
@@ -55,6 +62,18 @@ namespace DBTester
                         Console.WriteLine(ex);
                     }
                 }
+            }
+
+            var fileInfo = new FileInfo($"./output.csv");
+
+            if (fileInfo.Exists)
+            {
+                fileInfo.Delete();
+            }
+
+            using (var write = fileInfo.CreateText())
+            {
+                write.Write(builder.ToString());
             }
         }
     }
